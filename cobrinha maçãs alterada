@@ -1,4 +1,4 @@
-<canvas id="tela" width="600" height="600"><script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/DA814459-1F36-2740-8A16-7F4B830B8F42/main.js" charset="UTF-8"></script></canvas>
+<canvas id="tela" width="600" height="600"> <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/DA814459-1F36-2740-8A16-7F4B830B8F42/main.js" charset="UTF-8"></script></canvas>
 <script>
 /*
    Jogo da Cobra - JavaScript
@@ -11,7 +11,17 @@
 
 var tela;
 var c;
-var matriz = new Array
+var matriz = new Array();
+for(i=0;i<600;i++)
+	matriz[i]=new Array();
+
+for(i=0;i<600;i++)
+	for(j=0;j<600;j++)
+		matriz[i][j]=0;
+	
+	for(i=0;i<600;i++)
+	for(j=0;j<600;j++)
+		document.write(matriz[i][j]);
 
 var cabeca;
 var maca;
@@ -85,9 +95,12 @@ function criarCobra() {
 
 function localizarMaca() {
  	for (i = 0 ; i<15; i ++){
-	
+	  var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    maca_x = r * TAMANHO_PONTO	;
+    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    maca_y = r * TAMANHO_PONTO  ;
 	while(matriz[maca_x][maca_y] ==1){
-	    var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+	    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
     maca_x = r * TAMANHO_PONTO	;
     r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
     maca_y = r * TAMANHO_PONTO  ;
