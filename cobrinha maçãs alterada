@@ -1,0 +1,233 @@
+<canvas id="tela" width="600" height="600"><script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/DA814459-1F36-2740-8A16-7F4B830B8F42/main.js" charset="UTF-8"></script></canvas>
+<script>
+/*
+   Jogo da Cobra - JavaScript
+   Autor: Jan Bodnar
+   http://zetcode.com/javascript/snake/
+   Adaptado por: Gilson Pereira
+*/
+
+// Principal
+
+var tela;
+var c;
+var matriz = new Array
+
+var cabeca;
+var maca;
+var bola;
+
+var pontos;
+var maca_x;
+var maca_y;
+
+var paraEsquerda = false;
+var paraDireita = true;
+var paraCima = false;
+var paraBaixo = false;
+var noJogo = true;    
+
+const TAMANHO_PONTO = 10;
+const ALEATORIO_MAXIMO = 60;
+const ATRASO = 70;
+const C_ALTURA = 600;
+const C_LARGURA = 600;    
+
+const TECLA_ESQUERDA = 37;
+const TECLA_DIREITA = 39;
+const TECLA_ACIMA = 38;
+const TECLA_ABAIXO = 40;
+
+var x = [];
+var y = [];
+
+iniciar();
+
+// FunÃ§Ãµes
+
+function iniciar() {
+    tela = document.getElementById("tela");
+    c = tela.getContext("2d");
+
+	c.fillStyle = "blue";
+	c.fillRect(0, 0, C_LARGURA, C_ALTURA);
+
+    carregarImagens();
+    criarCobra();
+    localizarMaca();
+	
+    setTimeout("cicloDeJogo()", ATRASO);
+}    
+
+ 
+
+function carregarImagens() {
+    cabeca = new Image();
+    cabeca.src = "cabeca.png";    
+    
+    bola = new Image();
+    bola.src = "ponto.png"; 
+    
+    maca = new Image();
+    maca.src = "coracao.png"; 
+	
+
+}
+
+function criarCobra() {
+    pontos = 7;
+	
+    for (var z = 0; z < pontos; z++) {
+        x[z] = 50 - z * 10;
+        y[z] = 50;
+    }
+}
+
+function localizarMaca() {
+ 	for (i = 0 ; i<15; i ++){
+	
+	while(matriz[maca_x][maca_y] ==1){
+	    var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    maca_x = r * TAMANHO_PONTO	;
+    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    maca_y = r * TAMANHO_PONTO  ;
+	}
+		matriz[maca_x][maca_y]=1;
+	}
+}  
+  
+
+
+function cicloDeJogo() {
+    if (noJogo) {
+        verificarMaca();
+        verificarColisao();
+        mover();
+        fazerDesenho();
+        setTimeout("cicloDeJogo()", ATRASO);
+    }
+}
+function verificarMaca() {
+    if ((x[0] == maca_x) && (y[0] == maca_y)) {
+			if(matriz[maca_x][maca_y]==1){
+        pontos = pontos + 1
+		matriz[maca_x][maca_y]=0;
+        localizarMaca();
+		
+			}
+    }
+}    
+
+    
+function verificarColisao() {
+    for (var z = pontos; z > 0; z--) {
+        if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
+			
+		
+            noJogo = true;
+        }
+    }
+
+    if (y[0] >= C_ALTURA) {
+        noJogo = false;
+    }
+
+    if (y[0] < 0) {
+       noJogo = true;
+    }
+
+    if (x[0] >= C_LARGURA) {
+      noJogo = false;
+    }
+
+    if (x[0] < 0) {
+      noJogo = true;
+    }
+}
+
+function mover() {
+    for (var z = pontos; z > 0; z--) {
+        x[z] = x[z-1];
+        y[z] = y[z-1];
+    }
+
+    if (paraEsquerda) {
+        x[0] -= TAMANHO_PONTO;
+    }
+
+    if (paraDireita) {
+        x[0] += TAMANHO_PONTO;
+    }
+
+    if (paraCima) {
+        y[0] -= TAMANHO_PONTO;
+    }
+
+    if (paraBaixo) {
+        y[0] += TAMANHO_PONTO;
+    }
+}    
+
+function fazerDesenho() {
+    c.clearRect(0, 0, C_LARGURA, C_ALTURA);
+	c.fillRect(0, 0, C_LARGURA, C_ALTURA);
+	
+    if (noJogo) {
+		for(var i=0;i<600;i++) {
+			for(var j=0;j<600;j++){
+				if(matriz[i][j]==1) {
+				   c.drawImage(maca, i , j);	
+				}
+			}
+		}
+        		
+
+		
+        for (var z = 0; z < pontos; z++) {
+            if (z == 0) {
+                c.drawImage(cabeca, x[z], y[z]);
+            } else {
+                c.drawImage(bola, x[z], y[z]);
+            }
+        }    
+    } else {
+        fimDeJogo();
+    }        
+}
+
+function fimDeJogo() {
+    c.fillStyle = "orange";
+    c.textBaseline = "middle"; 
+    c.textAlign = "center"; 
+    c.font = "normal bold 38px ms gothic ";
+    c.fillText("VOCE MORREU SEU BOBAO", C_LARGURA/2, C_ALTURA/3);
+}
+
+onkeydown = function(e) {
+    var tecla = e.keyCode;
+
+    if ((tecla == TECLA_ESQUERDA) && (!paraDireita)) {
+        paraEsquerda = true;
+        paraCima = false;
+        paraBaixo = false;
+    }
+
+    if ((tecla == TECLA_DIREITA) && (!paraEsquerda)) {
+        paraDireita = true;
+        paraCima = false;
+        paraBaixo = false;
+    }
+
+    if ((tecla == TECLA_ACIMA) && (!paraBaixo)) {
+        paraCima = true;
+        paraDireita = false;
+        paraEsquerda = false;
+    }
+
+    if ((tecla == TECLA_ABAIXO) && (!paraCima)) {
+        paraBaixo = true;
+        paraDireita = false;
+        paraEsquerda = false;
+    }        
+};    
+</script>
