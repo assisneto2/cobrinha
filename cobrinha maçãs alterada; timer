@@ -25,12 +25,16 @@ for(i=0;i<600;i++)
 
 var cabeca;
 var maca;
+var maca2;
 var bola;
 var pontos;
 var maca_x;
 var maca_y;
+var obs_x
+var obs_y
 var count = new Number (); 
-var count = 31	 
+var count = 50
+var obs; 	 
 
 var paraEsquerda = false;
 var paraDireita = true;
@@ -60,12 +64,13 @@ function iniciar() {
     tela = document.getElementById("tela");
     c = tela.getContext("2d");
 
-	c.fillStyle = "blue";
+	c.fillStyle = "black";
 	c.fillRect(0, 0, C_LARGURA, C_ALTURA);
 
     carregarImagens();
     criarCobra();
     localizarMaca();
+	localizarObs(); 
 	
     setTimeout("cicloDeJogo()", ATRASO);
 }    
@@ -80,9 +85,10 @@ function carregarImagens() {
     bola.src = "ponto.png"; 
     
     maca = new Image();
-    maca.src = "maca.png";
+    maca.src = "maca.png";	
 	
-
+	obs = new Image(); 
+	obs.src = "obs.png" 
 	
 	
 
@@ -96,14 +102,14 @@ function start () {
 	}
 	if(tempo.innerText == '0') { 
 	noJogo = false
-	c.fillStyle = "blue"
+	c.fillStyle = "black"
 	c.fillRect(0, 0, C_LARGURA,C_ALTURA)
 	fimDeJogo()
 	} 
 } 
 
 function criarCobra() {
-    pontos = 7;
+    pontos = 6;
 	
     for (var z = 0; z < pontos; z++) {
         x[z] = 50 - z * 10;
@@ -112,7 +118,7 @@ function criarCobra() {
 }
 
 function localizarMaca() {
- 	for (i = 0 ; i<3; i ++){
+ 	for (i = 0 ; i<2; i ++){
 	  var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
     maca_x = r * TAMANHO_PONTO	;
     r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
@@ -126,13 +132,47 @@ function localizarMaca() {
 		matriz[maca_x][maca_y]=1;
 	}
 }  
-  
 
+function localizarObs() {
+ 	for (i = 0 ; i<2; i ++){
+	  var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    obs_x = r * TAMANHO_PONTO	;
+    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    obs_y = r * TAMANHO_PONTO  ;
+	while(matriz[obs_x][obs_y] ==1){
+	    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    obs_x = r * TAMANHO_PONTO	;
+    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    obs_y = r * TAMANHO_PONTO  ;
+	}
+		matriz[obs_x][obs_y]=1;
+	}
+}		  
+
+function verificarColisao() {
+
+    if (y[0] >= C_ALTURA) {
+        y[0] = 0 
+    }
+
+    if (y[0] < 0) {
+       y[0] = C_ALTURA
+    }
+
+    if (x[0] >= C_LARGURA) {
+      x[0] = 0
+    }
+
+    if (x[0] < 0) {
+      x[0] = C_LARGURA
+    }
+}
 
 function cicloDeJogo() {
     if (noJogo) {
         verificarMaca();
-        verificarColisao();
+		verificarObs(); 
+		verificarColisao();
         mover();
         fazerDesenho();
         setTimeout("cicloDeJogo()", ATRASO);
@@ -140,41 +180,22 @@ function cicloDeJogo() {
 }
 function verificarMaca() {
     if ((x[0] == maca_x) && (y[0] == maca_y)) {
-			if(matriz[maca_x][maca_y]==1){
+		if(matriz[maca_x][maca_y]==1){
         pontos++
 		matriz[maca_x][maca_y]=0;
 		}
     }
 }    
 
-
+function verificarObs() {
+    if ((x[0] == obs_x) && (y[0] == obs_y)) {
+			if(matriz[obs_x][obs_y]==1){
+        pontos--
+		matriz[obs_x][obs_y]=0;
+		}
+    }
+}  
     
-function verificarColisao() {
-    for (var z = pontos; z > 0; z--) {
-        if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
-			
-		
-            noJogo = false;
-        }
-    }
-
-    if (y[0] >= C_ALTURA) {
-        noJogo = false;
-    }
-
-    if (y[0] < 0) {
-       noJogo = false;
-    }
-
-    if (x[0] >= C_LARGURA) {
-      noJogo = false;
-    }
-
-    if (x[0] < 0) {
-      noJogo = false;
-    }
-}
-
 function mover() {
     for (var z = pontos; z > 0; z--) {
         x[z] = x[z-1];
@@ -203,14 +224,16 @@ function fazerDesenho() {
 	c.fillRect(0, 0, C_LARGURA, C_ALTURA);
 	
     if (noJogo) {
-		for(var i=0;i<600;i++) {
-			for(var j=0;j<600;j++){
-				if(matriz[i][j]==1) {
-					c.drawImage(maca, i , j);			   
+
+				if(matriz[obs_x][obs_y]==1) {
+					c.drawImage(obs, obs_x , obs_y);			   
 				}
-			}
-		}
-        		
+
+				if(matriz[maca_x][maca_y]==1 ) {
+					c.drawImage(maca, maca_x , maca_y);			   
+				}
+
+		
 
 		
         for (var z = 0; z < pontos; z++) {
@@ -225,12 +248,13 @@ function fazerDesenho() {
     }        
 }
 
+
 function fimDeJogo() {
-    c.fillStyle = "orange";
+    c.fillStyle = "white";
     c.textBaseline = "middle"; 
     c.textAlign = "center"; 
-    c.font = "normal bold 38px ms gothic ";
-    c.fillText("VOCE MORREU SEU BOBAO", C_LARGURA/2, C_ALTURA/3);
+    c.font = "normal bold 38px cursive ";
+    c.fillText("VOCE FOI ELIMINADO", C_LARGURA/2, C_ALTURA/3);
  
 }
 
@@ -266,7 +290,7 @@ onkeydown = function(e) {
 
  
 <body onload = "start();"> 
-TEMPO PARA O GAME ACABAR
+
 	<div id = "tempo"></div> 
 
 
