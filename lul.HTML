@@ -1,0 +1,300 @@
+<canvas id="tela" width="600" height="600"> <script type="text/javascript" src=" charset="UTF-8"></script></canvas>
+<script>
+/*
+   Jogo da Cobra - JavaScript
+   Autor: Jan Bodnar
+   http://zetcode.com/javascript/snake/
+   Adaptado por: Gilson Pereira
+*/
+
+// Principal
+
+var tela;
+var c;
+var matriz = new Array();
+for(i=0;i<600;i++)
+	matriz[i]=new Array();
+
+for(i=0;i<600;i++)
+	for(j=0;j<600;j++)
+		matriz[i][j]=0;
+	
+	for(i=0;i<600;i++)
+	for(j=0;j<600;j++)
+		
+
+var cabeca;
+var maca;
+var bola;
+var pontos;
+var maca_x;
+var maca_y;
+var obs_x
+var obs_y
+var count = new Number (); 
+var count = 50
+var obs; 	 
+
+var paraEsquerda = false;
+var paraDireita = true;
+var paraCima = false;
+var paraBaixo = false;
+var noJogo = true;    
+
+const TAMANHO_PONTO = 10;
+const ALEATORIO_MAXIMO = 60;
+const ATRASO = 60;
+const C_ALTURA = 600;
+const C_LARGURA = 600;    
+
+const TECLA_ESQUERDA = 37;
+const TECLA_DIREITA = 39;
+const TECLA_ACIMA = 38;
+const TECLA_ABAIXO = 40;
+
+var x = [];
+var y = [];
+
+iniciar();
+
+// FunÃ§Ãµes
+
+function iniciar() {
+    tela = document.getElementById("tela");
+    c = tela.getContext("2d");
+
+	c.fillStyle = "black";
+	c.fillRect(0, 0, C_LARGURA, C_ALTURA);
+
+    carregarImagens();
+    criarCobra();
+    localizarMaca();
+	localizarObs(); 
+	
+    setTimeout("cicloDeJogo()", ATRASO);
+}    
+
+ 
+
+function carregarImagens() {
+    cabeca = new Image();
+    cabeca.src = "cabeca.png";    
+    
+    bola = new Image();
+    bola.src = "ponto.png"; 
+    
+    maca = new Image();
+    maca.src = "maca.png";	
+	
+	obs = new Image(); 
+	obs.src = "obs.png" 
+	
+	
+
+}
+
+function start () { 
+	if ((count - 1) >= 0) { 
+		count-- 
+		tempo.innerText = count 
+		setTimeout ( 'start ();',1000);  
+	}
+	if(tempo.innerText == '0') { 
+	noJogo = false
+	c.fillStyle = "black"
+	c.fillRect(0, 0, C_LARGURA,C_ALTURA)
+	fimDeJogo()
+	} 
+} 
+
+function criarCobra() {
+    pontos = 6;
+	
+    for (var z = 0; z < pontos; z++) {
+        x[z] = 50 - z * 10;
+        y[z] = 50;
+    }
+}
+
+function localizarMaca() {
+ 	for (i = 0 ; i<2; i ++){
+	  var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    maca_x = r * TAMANHO_PONTO	;
+    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    maca_y = r * TAMANHO_PONTO  ;
+	while(matriz[maca_x][maca_y] ==1){
+	    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    maca_x = r * TAMANHO_PONTO	;
+    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    maca_y = r * TAMANHO_PONTO  ;
+	}
+		matriz[maca_x][maca_y]=1;
+	}
+}  
+
+function localizarObs() {
+ 	for (i = 0 ; i<2; i ++){
+	  var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    obs_x = r * TAMANHO_PONTO	;
+    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    obs_y = r * TAMANHO_PONTO  ;
+	while(matriz[obs_x][obs_y] ==1){
+	    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    obs_x = r * TAMANHO_PONTO	;
+    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    obs_y = r * TAMANHO_PONTO  ;
+	}
+		matriz[obs_x][obs_y]=1;
+	}
+}		  
+
+function verificarColisao() {
+
+    if (y[0] >= C_ALTURA) {
+        y[0] = 0 
+    }
+
+    if (y[0] < 0) {
+       y[0] = C_ALTURA
+    }
+
+    if (x[0] >= C_LARGURA) {
+      x[0] = 0
+    }
+
+    if (x[0] < 0) {
+      x[0] = C_LARGURA
+    }
+}
+
+function cicloDeJogo() {
+    if (noJogo) {
+        verificarMaca();
+		verificarObs(); 
+		verificarColisao();
+        mover();
+        fazerDesenho();
+        setTimeout("cicloDeJogo()", ATRASO);
+    }
+}
+function verificarMaca() {
+    if ((x[0] == maca_x) && (y[0] == maca_y)) {
+		if(matriz[maca_x][maca_y]==1){
+        pontos++
+				matriz[maca_x][maca_y]= 0 
+		}
+    }
+}    
+
+function verificarObs() {
+    if ((x[0] == obs_x) && (y[0] == obs_y)) {
+			if(matriz[obs_x][obs_y]==1){
+        pontos--
+		matriz[obs_x][obs_y]=0;
+		}
+    }
+}  
+    
+function mover() {
+    for (var z = pontos; z > 0; z--) {
+        x[z] = x[z-1];
+        y[z] = y[z-1];
+    }
+
+    if (paraEsquerda) {
+        x[0] -= TAMANHO_PONTO;
+    }
+
+    if (paraDireita) {
+        x[0] += TAMANHO_PONTO;
+    }
+
+    if (paraCima) {
+        y[0] -= TAMANHO_PONTO;
+    }
+
+    if (paraBaixo) {
+        y[0] += TAMANHO_PONTO;
+    }
+}    
+
+function fazerDesenho() {
+    c.clearRect(0, 0, C_LARGURA, C_ALTURA);
+	c.fillRect(0, 0, C_LARGURA, C_ALTURA);
+	
+    if (noJogo) {
+		
+			
+		if(matriz[maca_x][maca_y]==1) {
+			c.drawImage(maca, maca_x , maca_y);			   
+		}
+			
+		
+		
+		if(matriz[obs_x][obs_y]==1) {
+			c.drawImage(obs, obs_x , obs_y);
+		}
+
+
+		
+
+		
+        for (var z = 0; z < pontos; z++) {
+            if (z == 0) {
+                c.drawImage(cabeca, x[z], y[z]);
+            } else {
+                c.drawImage(bola, x[z], y[z]);
+            }
+        }    
+    } else {
+        fimDeJogo();
+    }        
+}
+
+
+function fimDeJogo() {
+    c.fillStyle = "white";
+    c.textBaseline = "middle"; 
+    c.textAlign = "center"; 
+    c.font = "normal bold 38px cursive ";
+    c.fillText("VOCE FOI ELIMINADO", C_LARGURA/2, C_ALTURA/3);
+ 
+}
+
+onkeydown = function(e) {
+    var tecla = e.keyCode;
+
+    if ((tecla == TECLA_ESQUERDA) && (!paraDireita)) {
+        paraEsquerda = true;
+        paraCima = false;
+        paraBaixo = false;
+    }
+
+    if ((tecla == TECLA_DIREITA) && (!paraEsquerda)) {
+        paraDireita = true;
+        paraCima = false;
+        paraBaixo = false;
+    }
+
+    if ((tecla == TECLA_ACIMA) && (!paraBaixo)) {
+        paraCima = true;
+        paraDireita = false;
+        paraEsquerda = false;
+    }
+
+    if ((tecla == TECLA_ABAIXO) && (!paraCima)) {
+        paraBaixo = true;
+        paraDireita = false;
+        paraEsquerda = false;
+    }        
+};    
+</script>
+
+
+ 
+<body onload = "start();"> 
+
+	<div id = "tempo"></div> 
+
+
+</body> 
