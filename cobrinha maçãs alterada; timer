@@ -1,4 +1,4 @@
-<canvas id="tela" width="600" height="600"> <script type="text/javascript" src=" charset="UTF-8"></script></canvas>
+<canvas id="tela" width="600" height="600"> <script type="text/javascript"  charset="UTF-8"></script></canvas>
 <script>
 /*
    Jogo da Cobra - JavaScript
@@ -36,15 +36,16 @@ var count = new Number ();
 var count = 50
 var obs; 	 
 
-var paraEsquerda = false;
-var paraDireita = true;
-var paraCima = false;
-var paraBaixo = false;
+var paraEsquerda 
+var paraDireita 
+var paraCima 
+var paraBaixo 
+var k
 var noJogo = true;    
 
 const TAMANHO_PONTO = 10;
 const ALEATORIO_MAXIMO = 60;
-const ATRASO = 60;
+const ATRASO = 80;
 const C_ALTURA = 600;
 const C_LARGURA = 600;    
 
@@ -60,6 +61,42 @@ iniciar();
 
 // FunÃ§Ãµes
 
+function alet () { 
+	k = Math.floor (Math.random() * 3 ) 
+	if (k==0){ 
+	paraEsquerda = true
+	paraBaixo = false 
+	paraCima = false 
+	paraDireita = false 
+
+	} 
+	if (k==1){ 
+	paraEsquerda = false 
+	paraBaixo = true 
+	paraCima = false 
+	paraDireita = false 
+	
+	} 
+	if (k==2){ 
+	paraEsquerda = false
+	paraBaixo = false 
+	paraCima = true
+	paraDireita = false 
+
+	} 
+	if (k==3){ 
+	paraEsquerda = false 
+	paraBaixo = false 
+	paraCima = false 
+	paraDireita = true
+	
+	} 
+} 
+	
+	
+	
+	
+
 function iniciar() {
     tela = document.getElementById("tela");
     c = tela.getContext("2d");
@@ -71,7 +108,7 @@ function iniciar() {
     criarCobra();
     localizarMaca();
 	localizarObs(); 
-	
+	alet(); 
     setTimeout("cicloDeJogo()", ATRASO);
 }    
 
